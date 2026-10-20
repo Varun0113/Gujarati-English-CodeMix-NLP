@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeMix Lab — Gujarati–English NLP Research Interface</title>
+    <!-- Inline SVG Favicon with Gujarati & English glyphs -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234F46E5'/><text x='50%25' y='42%25' font-family='system-ui, sans-serif' font-size='30' font-weight='700' fill='%23ffffff' text-anchor='middle' dominant-baseline='middle'>ગુ</text><text x='50%25' y='74%25' font-family='system-ui, sans-serif' font-size='26' font-weight='700' fill='%23A5B4FC' text-anchor='middle' dominant-baseline='middle'>EN</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Minimal Sticky Header -->
+    <header class="app-header">
+        <div class="header-inner container">
+            <a href="#" class="brand-link" aria-label="CodeMix Lab Home">
+                <div class="brand-symbol">
+                    <span class="sym-guj">ગુ</span>
+                    <span class="sym-en">EN</span>
+                </div>
+                <div class="brand-info">
+                    <span class="brand-name">CodeMix Lab</span>
+                    <span class="brand-subtitle">Gujarati–English NLP Research Interface</span>
+                </div>
+            </a>
+            <div class="header-right">
+                <nav class="nav-links" aria-label="Main Navigation">
+                    <a href="#analyzer">Analyze</a>
+                    <a href="#pipeline">Pipeline</a>
+                    <a href="#insights">Insights</a>
+                    <a href="#evaluation">Evaluation</a>
+                </nav>
+                <div class="model-status-badge" title="Running locally with scikit-learn models">
+                    <span class="status-indicator-dot"></span>
+                    <span>Local model</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <div class="eyebrow-pill">NLP RESEARCH LABORATORY</div>
+                    <h1 class="hero-title">
+                        Understand language<br>
+                        when languages overlap.
+                    </h1>
+                    <p class="hero-lead">
+                        Analyze Gujarati, English, and Romanized Gujarati code-mixed text through token-level language identification, normalization, transliteration, sentiment analysis, and topic classification.
+                    </p>
+                    <div class="hero-badges-row">
+                        <span class="feature-tag">LOCAL NLP MODEL</span>
+                        <span class="feature-tag">NO EXTERNAL API</span>
+                        <span class="feature-tag">TF-IDF + LOGISTIC REGRESSION</span>
+                    </div>
+                </div>
+
+                <!-- Code-Switching Flow Illustration -->
+                <div class="hero-switch-panel">
+                    <div class="switch-panel-header">
+                        <span class="switch-panel-title">INTRASENTENTIAL CODE-SWITCHING FLOW</span>
+                        <span class="switch-panel-tag">LIVE PARSER DEMO</span>
+                    </div>
+                    <div class="switch-flow-visual">
+                        <svg class="switch-curves" viewBox="0 0 460 60" preserveAspectRatio="none" aria-hidden="true">
+                            <path d="M 45 30 C 85 8, 105 8, 145 30" class="curve-line curve-rg-en"></path>
+                            <path d="M 145 30 C 175 52, 195 52, 225 30" class="curve-line curve-en-rg"></path>
+                            <path d="M 225 30 C 265 8, 285 8, 335 30" class="curve-line curve-rg-en"></path>
+                            <path d="M 335 30 C 375 52, 395 52, 425 30" class="curve-line curve-en-rg"></path>
+                        </svg>
+                        <div class="switch-nodes-row">
+                            <div class="switch-node">
+                                <span class="node-word">Aaje</span>
+                                <span class="node-lang tag-rg">RG</span>
+                            </div>
+                            <div class="switch-node">
+                                <span class="node-word">college</span>
+                                <span class="node-lang tag-en">EN</span>
+                            </div>
+                            <div class="switch-node">
+                                <span class="node-word">ma</span>
+                                <span class="node-lang tag-rg">RG</span>
+                            </div>
+                            <div class="switch-node">
+                                <span class="node-word">presentation</span>
+                                <span class="node-lang tag-en">EN</span>
+                            </div>
+                            <div class="switch-node">
+                                <span class="node-word">che</span>
+                                <span class="node-lang tag-rg">RG</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="switch-legend">
+                        <span><strong class="legend-dot dot-rg"></strong> Romanized Gujarati (RG)</span>
+                        <span><strong class="legend-dot dot-en"></strong> English (EN)</span>
+                        <span><strong class="legend-dot dot-guj"></strong> Gujarati Script (GU)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Analysis Workspace -->
+        <section class="workspace-section" id="analyzer">
+            <div class="container">
+                <div class="panel-box">
+                    <div class="panel-header-row">
+                        <div>
+                            <h2 class="workspace-heading">Interactive Text Analyzer</h2>
+                            <p class="workspace-subtext">Write or paste Gujarati, English, or code-mixed text.</p>
+                        </div>
+                        <div class="char-count-wrap">
+                            <span id="char-count" class="char-counter">0 / 500</span>
+                        </div>
+                    </div>
+
+                    <!-- Alert Banner -->
+                    <div id="alert-banner" class="alert-banner" role="alert" aria-live="polite"></div>
+
+                    <!-- Input Text Area -->
+                    <div class="textarea-wrapper">
+                        <textarea
+                            id="input-text"
+                            placeholder="Aaje college ma presentation che and I am very excited!"
+                            maxlength="500"
+                            rows="4"
+                            aria-label="Text to analyze"
+                        ></textarea>
+                    </div>
+
+                    <!-- Action Toolbar & Example Chips -->
+                    <div class="workspace-toolbar">
+                        <div class="example-presets">
+                            <span class="presets-label">Examples:</span>
+                            <div class="presets-scroll">
+                                <button type="button" class="preset-pill" data-sample="Mne aa movie bau game che, story ekdum amazing che.">
+                                    Romanized Gujarati
+                                </button>
+                                <button type="button" class="preset-pill" data-sample="Aaje college ma presentation che and I am very excited!">
+                                    Gujarati + English
+                                </button>
+                                <button type="button" class="preset-pill" data-sample="This is soooo goodddd brooo">
+                                    Informal text
+                                </button>
+                                <button type="button" class="preset-pill" data-sample="This product is very expensive and quality is not good.">
+                                    English sentiment
+                                </button>
+                                <button type="button" class="preset-pill" data-sample="આજે મને કોલેજમાં જવું છે.">
+                                    Gujarati script
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="toolbar-actions">
+                            <button id="clear-btn" class="btn-subtle" type="button">
+                                Clear
+                            </button>
+                            <button id="analyze-btn" class="btn-accent" type="button">
+                                <span>Analyze text</span>
+                                <span class="btn-arrow" aria-hidden="true">→</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="shortcut-tip">Tip: Press <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to analyze immediately.</div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state-card" class="state-container">
+                    <div class="state-icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 6.75A2.25 2.25 0 010 15.75V5.25A2.25 2.25 0 012.25 3h19.5A2.25 2.25 0 0124 5.25v10.5A2.25 2.25 0 0121.75 18H5.25l-3 3z" />
+                        </svg>
+                    </div>
+                    <h3 class="state-heading">Your analysis will appear here</h3>
+                    <p class="state-description">Enter code-mixed text above to begin linguistic analysis.</p>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading-state-card" class="state-container loading-state" style="display: none;">
+                    <div class="loading-spinner"></div>
+                    <h3 class="state-heading">Analyzing linguistic structure…</h3>
+                    <p class="state-description">Language detection · normalization · classification</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="error-state-card" class="state-container error-state" style="display: none;">
+                    <div class="state-icon-box error">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <h3 class="state-heading error">Analysis Failed</h3>
+                    <p id="error-card-desc" class="state-description">
+                        Unable to process the text.<br>
+                        Please check that the Flask server is running and try again.
+                    </p>
+                </div>
+
+                <!-- Results Section -->
+                <div id="results-section" style="display: none;">
+                    <!-- Overview Metrics Row -->
+                    <div class="results-header-box">
+                        <div class="panel-header-row" style="margin-bottom: 14px;">
+                            <h2 class="workspace-heading">Analysis Overview</h2>
+                            <span class="badge-research">COMPUTED REAL DATA</span>
+                        </div>
+
+                        <div class="overview-stats-grid">
+                            <div class="overview-stat-tile">
+                                <span class="stat-meta">TOKENS</span>
+                                <span id="stat-total-tokens" class="stat-number">0</span>
+                            </div>
+                            <div class="overview-stat-tile">
+                                <span class="stat-meta">LANGUAGE TYPES</span>
+                                <span id="stat-lang-types" class="stat-number">0</span>
+                            </div>
+                            <div class="overview-stat-tile">
+                                <span class="stat-meta">NORMALIZED</span>
+                                <span id="stat-norm-tokens" class="stat-number">0</span>
+                            </div>
+                            <div class="overview-stat-tile">
+                                <span class="stat-meta">UNKNOWN</span>
+                                <span id="stat-unk-tokens" class="stat-number">0</span>
+                            </div>
+                            <div class="overview-stat-tile highlight">
+                                <span class="stat-meta">DOMINANT LANGUAGE</span>
+                                <span id="stat-dom-lang" class="stat-number text-primary">—</span>
+                            </div>
+                            <div class="overview-stat-tile highlight">
+                                <span class="stat-meta">SENTIMENT</span>
+                                <span id="stat-sentiment" class="stat-number">—</span>
+                            </div>
+                            <div class="overview-stat-tile highlight">
+                                <span class="stat-meta">TOPIC</span>
+                                <span id="stat-topic" class="stat-number">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sentiment & Topic Classifiers Grid -->
+                    <div class="dual-classifier-grid">
+                        <!-- Sentiment Panel -->
+                        <div class="panel-box">
+                            <div class="classifier-header">
+                                <div>
+                                    <span class="classifier-type">SUPERVISED CLASSIFICATION</span>
+                                    <h3 class="classifier-title">Sentiment Probability</h3>
+                                </div>
+                                <span id="sentiment-badge" class="pred-pill neutral">Neutral</span>
+                            </div>
+                            <div class="confidence-row">
+                                <span id="sentiment-confidence-label" class="confidence-text">Model confidence: 0.0%</span>
+                            </div>
+                            <div id="sentiment-prob-bars" class="prob-bars-stack">
+                                <!-- Real dynamic horizontal probability bars -->
+                            </div>
+                            <p class="classifier-note">Probability estimate for this input, not a guarantee of correctness.</p>
+                        </div>
+
+                        <!-- Topic Panel -->
+                        <div class="panel-box">
+                            <div class="classifier-header">
+                                <div>
+                                    <span class="classifier-type">SUPERVISED CLASSIFICATION</span>
+                                    <h3 class="classifier-title">Topic Probability</h3>
+                                </div>
+                                <span id="topic-badge" class="pred-pill topic">General</span>
+                            </div>
+                            <div class="confidence-row">
+                                <span id="topic-confidence-label" class="confidence-text">Model confidence: 0.0%</span>
+                            </div>
+                            <div id="topic-prob-bars" class="prob-bars-stack">
+                                <!-- Real dynamic horizontal probability bars (sorted descending) -->
+                            </div>
+                            <p class="classifier-note">Ranked classification probabilities across trained topic domains.</p>
+                        </div>
+                    </div>
+
+                    <!-- Language Composition & Switching Pattern -->
+                    <div class="panel-box">
+                        <div class="panel-header-row">
+                            <div>
+                                <h3 class="section-title">Language Composition & Code-Switching Flow</h3>
+                                <p class="section-desc">Token-level language distribution and intra-sentential transitions.</p>
+                            </div>
+                        </div>
+
+                        <!-- Composition Horizontal Bar -->
+                        <div class="composition-wrapper">
+                            <div class="composition-title">Language Composition</div>
+                            <div id="lang-comp-bars" class="lang-bars-list">
+                                <!-- English (Indigo), Romanized Gujarati (Teal), Gujarati (Violet), Unknown (Gray) -->
+                            </div>
+                        </div>
+
+                        <!-- Switching Pattern Sequence -->
+                        <div class="switching-wrapper">
+                            <div class="composition-title">Language Switching Pattern</div>
+                            <div id="token-sequence-box" class="token-seq-container">
+                                <!-- Dynamic token tags: Token (LANG) → Token (LANG) -->
+                            </div>
+
+                            <!-- Transition Frequency List -->
+                            <div id="transitions-container" class="transitions-block" style="display: none;">
+                                <div class="transitions-label">Consecutive Transition Frequencies:</div>
+                                <div id="transitions-tags" class="transitions-pills"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Text Normalization Section -->
+                    <div class="panel-box">
+                        <div class="panel-header-row">
+                            <div>
+                                <h3 class="section-title">Normalization Comparison</h3>
+                                <p class="section-desc">Before/after token transformation for informal and colloquial spellings.</p>
+                            </div>
+                            <span id="norm-summary-tag" class="meta-tag">Tokens Changed: 0 / 0</span>
+                        </div>
+
+                        <div class="text-comparison-duo">
+                            <div class="comparison-side">
+                                <span class="side-label">ORIGINAL TEXT</span>
+                                <div id="original-text-box" class="side-content">—</div>
+                            </div>
+                            <div class="comparison-side">
+                                <span class="side-label">NORMALIZED TEXT</span>
+                                <div id="normalized-text-box" class="side-content">—</div>
+                            </div>
+                        </div>
+
+                        <div class="norm-changes-list-wrapper">
+                            <div class="composition-title">Token Transformations Detected</div>
+                            <div id="norm-transformations-grid" class="norm-transformations-grid">
+                                <!-- Bau → Bahu, etc. Or 'No normalization changes detected.' -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Token-Level Analysis Table -->
+                    <div class="panel-box">
+                        <div class="panel-header-row">
+                            <div>
+                                <h3 class="section-title">Token-Level Analysis</h3>
+                                <p class="section-desc">Word-level language tagging, normalization, and transliteration mapping.</p>
+                            </div>
+                            <div id="token-counts-summary" class="token-counts-summary">
+                                <span>Total: <strong id="cnt-total">0</strong></span>
+                                <span>Gujarati: <strong id="cnt-guj">0</strong></span>
+                                <span>English: <strong id="cnt-eng">0</strong></span>
+                                <span>Romanized: <strong id="cnt-rom">0</strong></span>
+                                <span>Unknown: <strong id="cnt-unk">0</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="table-scroll-container">
+                            <table class="academic-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">#</th>
+                                        <th>TOKEN</th>
+                                        <th>LANGUAGE</th>
+                                        <th>NORMALIZED</th>
+                                        <th>TRANSLITERATION</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tokens-table-tbody">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Unknown Tokens Box (Displayed if unclassified words exist) -->
+                        <div id="unknown-tokens-panel" class="unknown-tokens-panel" style="display: none;">
+                            <div class="unknown-header">
+                                <span class="unknown-title">Unknown Tokens Analysis</span>
+                                <span id="unknown-count-pill" class="unknown-pill">0 unmapped</span>
+                            </div>
+                            <p class="unknown-desc">These tokens were not confidently matched to the supported language dictionaries.</p>
+                            <div id="unknown-tokens-tags" class="unknown-tags-wrap"></div>
+                        </div>
+                    </div>
+
+                    <!-- Research Insights Section -->
+                    <div class="panel-box" id="insights">
+                        <div class="panel-header-row">
+                            <div>
+                                <span class="classifier-type">SYNTHESIZED INTERPRETATION</span>
+                                <h3 class="section-title">What the model found</h3>
+                            </div>
+                        </div>
+                        <div class="insight-editorial-box">
+                            <p id="research-insight-content" class="insight-text">—</p>
+                            <div id="confidence-assessment-box" class="confidence-notice solid">
+                                <span id="confidence-assessment-text">Model prediction is relatively confident across extracted feature weights.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Text Statistics Grid -->
+                    <div class="panel-box">
+                        <h3 class="section-title" style="margin-bottom: 14px;">Text Statistics</h3>
+                        <div class="stats-compact-grid">
+                            <div class="stat-compact-item">
+                                <span class="sc-label">Characters</span>
+                                <span id="sc-chars" class="sc-val">0</span>
+                            </div>
+                            <div class="stat-compact-item">
+                                <span class="sc-label">Tokens</span>
+                                <span id="sc-tokens" class="sc-val">0</span>
+                            </div>
+                            <div class="stat-compact-item">
+                                <span class="sc-label">Unique Tokens</span>
+                                <span id="sc-unique" class="sc-val">0</span>
+                            </div>
+                            <div class="stat-compact-item">
+                                <span class="sc-label">Normalized</span>
+                                <span id="sc-norm" class="sc-val">0</span>
+                            </div>
+                            <div class="stat-compact-item">
+                                <span class="sc-label">Unknown</span>
+                                <span id="sc-unk" class="sc-val">0</span>
+                            </div>
+                            <div class="stat-compact-item">
+                                <span class="sc-label">Avg Token Length</span>
+                                <span id="sc-avg-len" class="sc-val">0.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NLP Pipeline Visualization Section -->
+        <section class="section-editorial" id="pipeline">
+            <div class="container">
+                <div class="section-header-centered">
+                    <span class="classifier-type">PIPELINE ARCHITECTURE</span>
+                    <h2 class="editorial-title">Five-Stage NLP Processing Pipeline</h2>
+                    <p class="editorial-sub">
+                        Deterministic text normalization paired with sublinear TF-IDF features and supervised multi-task classification.
+                    </p>
+                </div>
+
+                <div class="pipeline-flow-wrapper">
+                    <div class="pipeline-node">
+                        <div class="node-step">01</div>
+                        <div class="node-name">LANGUAGE DETECTION</div>
+                        <div class="node-desc">Identify language at token level across Gujarati script, Romanized lexicon, and English.</div>
+                    </div>
+                    <div class="pipeline-connector" aria-hidden="true">→</div>
+
+                    <div class="pipeline-node">
+                        <div class="node-step">02</div>
+                        <div class="node-name">NORMALIZATION</div>
+                        <div class="node-desc">Standardize informal spellings, repeated chars, and chat shorthand.</div>
+                    </div>
+                    <div class="pipeline-connector" aria-hidden="true">→</div>
+
+                    <div class="pipeline-node">
+                        <div class="node-step">03</div>
+                        <div class="node-name">TRANSLITERATION</div>
+                        <div class="node-desc">Canonicalize colloquial Romanized Gujarati phonetic variations.</div>
+                    </div>
+                    <div class="pipeline-connector" aria-hidden="true">→</div>
+
+                    <div class="pipeline-node">
+                        <div class="node-step">04</div>
+                        <div class="node-name">TF-IDF</div>
+                        <div class="node-desc">Convert normalized text into numerical sublinear n-gram feature vectors.</div>
+                    </div>
+                    <div class="pipeline-connector" aria-hidden="true">→</div>
+
+                    <div class="pipeline-node">
+                        <div class="node-step">05</div>
+                        <div class="node-name">CLASSIFICATION</div>
+                        <div class="node-desc">Predict polarity sentiment and domain topic with full probability vectors.</div>
+                    </div>
+                </div>
+
+                <!-- System Architecture Technical Diagram -->
+                <div class="architecture-diagram-panel">
+                    <div class="arch-title">System Architecture Flowchart</div>
+                    <div class="arch-flowchart">
+                        <div class="arch-box input">USER INPUT</div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-box">TOKENIZATION</div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-box">LANGUAGE DETECTION</div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-box highlight">NORMALIZATION + TRANSLITERATION</div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-box">TF-IDF FEATURES</div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-box">LOGISTIC REGRESSION</div>
+                        <div class="arch-arrow">↓</div>
+                        <div class="arch-split">
+                            <div class="arch-box branch sentiment">SENTIMENT POLARITY</div>
+                            <div class="arch-box branch topic">TOPIC DOMAIN</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Methodology Section -->
+        <section class="section-editorial alt-bg">
+            <div class="container">
+                <div class="section-header-centered">
+                    <span class="classifier-type">RESEARCH METHODOLOGY</span>
+                    <h2 class="editorial-title">Experimental Workflow</h2>
+                    <p class="editorial-sub">A principled approach to handling code-mixed Gujarati-English data.</p>
+                </div>
+
+                <div class="methodology-chain">
+                    <div class="method-card">
+                        <span class="method-stage">COLLECT</span>
+                        <p class="method-detail">Curated bilingual and code-mixed conversational corpora covering academic, entertainment, and social domains.</p>
+                    </div>
+                    <div class="method-card">
+                        <span class="method-stage">CLEAN</span>
+                        <p class="method-detail">Regex tokenization preserving native Gujarati Unicode (`\u0A80`–`\u0AFF`), Latin characters, and punctuation.</p>
+                    </div>
+                    <div class="method-card">
+                        <span class="method-stage">NORMALIZE</span>
+                        <p class="method-detail">Phonetic reduction for lengthened characters and Romanized dictionary canonicalization.</p>
+                    </div>
+                    <div class="method-card">
+                        <span class="method-stage">REPRESENT</span>
+                        <p class="method-detail">Sublinear TF-IDF word and character n-grams to mitigate out-of-vocabulary sparsity.</p>
+                    </div>
+                    <div class="method-card">
+                        <span class="method-stage">CLASSIFY</span>
+                        <p class="method-detail">Calibrated Logistic Regression with L2 regularization to produce smooth probability distributions.</p>
+                    </div>
+                    <div class="method-card">
+                        <span class="method-stage">EVALUATE</span>
+                        <p class="method-detail">Stratified holdout evaluation reporting Accuracy, Precision, Recall, and weighted F1-Scores.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Model Evaluation Section -->
+        <section class="section-editorial" id="evaluation">
+            <div class="container">
+                <div class="section-header-centered">
+                    <span class="classifier-type">BENCHMARK METRICS</span>
+                    <h2 class="editorial-title">Model Evaluation</h2>
+                    <p class="editorial-sub">
+                        Evaluation metrics dynamically loaded from <code>backend/models/metrics.json</code> across stratified holdout test splits.
+                    </p>
+                </div>
+
+                <div class="concept-explanation-panel">
+                    <strong>Model Evaluation Metrics vs. Prediction Confidence:</strong><br>
+                    • <em>Evaluation metrics</em> describe model performance (Accuracy, Precision, Recall, F1) across the evaluation holdout dataset.<br>
+                    • <em>Prediction confidence</em> describes the individual class probability estimated by the model for the current specific input.
+                </div>
+
+                <!-- Model Comparison Chart -->
+                <div class="panel-box">
+                    <div class="panel-header-row" style="margin-bottom: 12px;">
+                        <h3 class="section-title">Model Performance Comparison</h3>
+                        <div class="chart-legend-row">
+                            <span class="legend-item"><span class="legend-swatch sentiment"></span> Sentiment Model</span>
+                            <span class="legend-item"><span class="legend-swatch topic"></span> Topic Model</span>
+                        </div>
+                    </div>
+
+                    <div class="grouped-metric-chart">
+                        <!-- Accuracy -->
+                        <div class="metric-chart-group">
+                            <span class="group-metric-name">Accuracy</span>
+                            <div class="group-bar-duo">
+                                <div class="single-comp-bar">
+                                    <span class="bar-role">Sentiment</span>
+                                    <div class="comp-track"><div id="comp-acc-sent" class="comp-fill sentiment" style="width: 69.57%;"></div></div>
+                                    <span id="comp-acc-sent-val" class="comp-pct">69.57%</span>
+                                </div>
+                                <div class="single-comp-bar">
+                                    <span class="bar-role">Topic</span>
+                                    <div class="comp-track"><div id="comp-acc-top" class="comp-fill topic" style="width: 57.69%;"></div></div>
+                                    <span id="comp-acc-top-val" class="comp-pct">57.69%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Precision -->
+                        <div class="metric-chart-group">
+                            <span class="group-metric-name">Precision (Weighted)</span>
+                            <div class="group-bar-duo">
+                                <div class="single-comp-bar">
+                                    <span class="bar-role">Sentiment</span>
+                                    <div class="comp-track"><div id="comp-prec-sent" class="comp-fill sentiment" style="width: 77.90%;"></div></div>
+                                    <span id="comp-prec-sent-val" class="comp-pct">77.90%</span>
+                                </div>
+                                <div class="single-comp-bar">
+                                    <span class="bar-role">Topic</span>
+                                    <div class="comp-track"><div id="comp-prec-top" class="comp-fill topic" style="width: 60.38%;"></div></div>
+                                    <span id="comp-prec-top-val" class="comp-pct">60.38%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recall -->
+                        <div class="metric-chart-group">
+                            <span class="group-metric-name">Recall (Weighted)</span>
+                            <div class="group-bar-duo">
+                                <div class="single-comp-bar">
+                                    <span class="bar-role">Sentiment</span>
+                                    <div class="comp-track"><div id="comp-rec-sent" class="comp-fill sentiment" style="width: 69.57%;"></div></div>
+                                    <span id="comp-rec-sent-val" class="comp-pct">69.57%</span>
+                                </div>
+                                <div class="single-comp-bar">
+                                    <span class="bar-role">Topic</span>
+                                    <div class="comp-track"><div id="comp-rec-top" class="comp-fill topic" style="width: 57.69%;"></div></div>
+                                    <span id="comp-rec-top-val" class="comp-pct">57.69%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- F1 Score -->
+                        <div class="metric-chart-group">
+                            <span class="group-metric-name">F1 Score (Weighted)</span>
+                            <div class="group-bar-duo">
+                                <div class="single-comp-bar">
+                                    <span class="bar-role">Sentiment</span>
+                                    <div class="comp-track"><div id="comp-f1-sent" class="comp-fill sentiment" style="width: 64.00%;"></div></div>
+                                    <span id="comp-f1-sent-val" class="comp-pct">64.00%</span>
+                                </div>
+                                <div class="single-comp-bar">
+                                    <span class="bar-role">Topic</span>
+                                    <div class="comp-track"><div id="comp-f1-top" class="comp-fill topic" style="width: 57.04%;"></div></div>
+                                    <span id="comp-f1-top-val" class="comp-pct">57.04%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Details Table -->
+                    <div class="table-scroll-container" style="margin-top: 20px;">
+                        <table class="academic-table">
+                            <thead>
+                                <tr>
+                                    <th>MODEL</th>
+                                    <th>ACCURACY</th>
+                                    <th>PRECISION</th>
+                                    <th>RECALL</th>
+                                    <th>F1-SCORE</th>
+                                    <th>SAMPLES</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Sentiment Classifier</strong></td>
+                                    <td id="det-sent-acc">69.57%</td>
+                                    <td id="det-sent-prec">77.90%</td>
+                                    <td id="det-sent-rec">69.57%</td>
+                                    <td id="det-sent-f1">64.00%</td>
+                                    <td>115</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Topic Classifier</strong></td>
+                                    <td id="det-top-acc">57.69%</td>
+                                    <td id="det-top-prec">60.38%</td>
+                                    <td id="det-top-rec">57.69%</td>
+                                    <td id="det-top-f1">57.04%</td>
+                                    <td>126</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Limitations Section -->
+                <div class="limitations-editorial-box">
+                    <h3 class="limitations-heading">Current Research Limitations</h3>
+                    <ul class="limitations-list">
+                        <li><strong>Prototype-sized dataset:</strong> The models are trained on a curated corpus of 115 sentiment and 126 topic samples designed for academic demonstration.</li>
+                        <li><strong>Spelling diversity:</strong> Romanized Gujarati has highly variable informal spelling without standardized orthography; unmapped tokens are tagged as Unknown.</li>
+                        <li><strong>Classical linear ML bounds:</strong> TF-IDF representations capture lexical surface n-grams without deep transformer-level self-attention.</li>
+                        <li><strong>Topic classifier bounds:</strong> The 8-class topic model achieves 57.69% accuracy; predictions are statistical estimates rather than guarantees.</li>
+                        <li><strong>Confidence diagnostics:</strong> Individual prediction confidence represents calibrated softmax probabilities for the given text.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Minimal Academic Footer -->
+    <footer class="app-footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <span class="footer-name">CodeMix Lab</span>
+                <span class="footer-tagline">Gujarati–English NLP Research Interface • Standalone Computational Linguistics Prototype</span>
+            </div>
+            <div class="footer-note">
+                Pure Python + Flask + Vanilla HTML/CSS/JS • Zero External AI APIs
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
